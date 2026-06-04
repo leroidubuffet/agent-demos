@@ -23,7 +23,7 @@ public class Main {
                 .build();
 
         CodeReviewAgent agent = AiServices.builder(CodeReviewAgent.class)
-                .chatModel(model)
+                .chatLanguageModel(model)
                 .tools(new GitTools())           // ← la única diferencia con v1
                 .systemMessageProvider(id -> SYSTEM_PROMPT)
                 .build();

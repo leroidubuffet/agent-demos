@@ -75,7 +75,7 @@ public class TooManyToolsAgent {
         // el modelo en decidir cuál usar y con qué frecuencia confunde
         // readFile con getFileContent.
         DevAgent agent = AiServices.builder(DevAgent.class)
-                .chatModel(model)
+                .chatLanguageModel(model)
                 .tools(new AllTheTools())
                 .build();
 

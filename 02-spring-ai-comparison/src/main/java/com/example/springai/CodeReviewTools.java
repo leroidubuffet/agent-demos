@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 @Component
 public class CodeReviewTools {
 
-    @Tool("Lee el contenido completo de un archivo. " +
+    @Tool(description = "Lee el contenido completo de un archivo. " +
           "Usar cuando necesites ver código existente antes de comentarlo.")
     public String readFile(String path) {
         try {
@@ -23,7 +23,7 @@ public class CodeReviewTools {
         }
     }
 
-    @Tool("Lista los archivos de un directorio (no recursivo). " +
+    @Tool(description = "Lista los archivos de un directorio (no recursivo). " +
           "Usar cuando necesites saber qué archivos existen antes de leerlos.")
     public String listFiles(String directory) {
         try (Stream<Path> paths = Files.list(Path.of(directory))) {

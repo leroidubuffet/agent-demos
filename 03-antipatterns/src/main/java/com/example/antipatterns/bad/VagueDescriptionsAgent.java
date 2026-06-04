@@ -46,7 +46,7 @@ public class VagueDescriptionsAgent {
                 .build();
 
         ReviewAgent agent = AiServices.builder(ReviewAgent.class)
-                .chatModel(model)
+                .chatLanguageModel(model)
                 .tools(new BadTools())
                 .build();
 

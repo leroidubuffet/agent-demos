@@ -63,13 +63,13 @@ public class FocusedAgent {
         // Dos agentes con 3 tools cada uno en lugar de uno con 15.
         // Cada modelo tiene un espacio de decisión más pequeño y más claro.
         CodeReviewAgent reviewer = AiServices.builder(CodeReviewAgent.class)
-                .chatModel(model)
+                .chatLanguageModel(model)
                 .tools(new ReadOnlyTools())
                 .systemMessageProvider(id -> "Eres un revisor de código. Tu trabajo es leer, ejecutar tests y opinar. No escribes ni haces commits.")
                 .build();
 
         DocumentationAgent documenter = AiServices.builder(DocumentationAgent.class)
-                .chatModel(model)
+                .chatLanguageModel(model)
                 .tools(new DocumentationTools())
                 .systemMessageProvider(id -> "Eres un documentador. Recibes el resumen de una revisión y creas los artefactos necesarios.")
                 .build();

@@ -22,7 +22,7 @@ public class Main {
 
         // Esto es todo: interfaz + builder + build(). LangChain4j genera el loop.
         CodeReviewAgent agent = AiServices.builder(CodeReviewAgent.class)
-                .chatModel(model)
+                .chatLanguageModel(model)
                 .systemMessageProvider(id -> SYSTEM_PROMPT)
                 .build();
 

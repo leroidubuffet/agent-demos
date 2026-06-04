@@ -62,7 +62,7 @@ public class DescriptiveToolsAgent {
                 .build();
 
         ReviewAgent agent = AiServices.builder(ReviewAgent.class)
-                .chatModel(model)
+                .chatLanguageModel(model)
                 .tools(new SafeTools())
                 .systemMessageProvider(id -> "Eres un revisor de código senior con acceso al repositorio.")
                 .build();
