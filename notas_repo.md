@@ -1,61 +1,129 @@
-# agent-demos — Módulo 6, slides 25-28
+# Cómo mostrar agent-demos en clase
 
-Demostraciones de agentes Java con LangChain4j y Spring AI.
-Cada módulo corresponde a un slide del curso.
-
-## Prerrequisitos
-
-- Java 21
-- Maven 3.9+
-- `ANTHROPIC_API_KEY` en el entorno
-
-## Estructura
-
-```
-01-minimal-agent/     ← slide 26: construcción incremental en tres pasos
-  v1/                 paso 1: solo interfaz + AiServices.builder()
-  v2/                 paso 2: + una @Tool con readFile
-  v3/                 paso 3: + listFiles (dos tools)
-
-02-spring-ai-comparison/  ← slide 27: mismo agente, estilo Spring Boot
-  (proyecto independiente con Spring Boot como parent)
-
-03-antipatterns/          ← slide 28: código malo vs código corregido
-  bad/TooManyToolsAgent       15 tools en un agente
-  bad/VagueDescriptionsAgent  descripciones vagas + sin manejo de error
-  good/FocusedAgent           dos agentes especializados con 3 tools cada uno
-  good/DescriptiveToolsAgent  descripciones precisas + error handling + límite de llamadas
-```
-
-## Ejecutar
+## Antes de empezar
 
 ```bash
+git clone https://github.com/leroidubuffet/agent-demos
+cd agent-demos
 export ANTHROPIC_API_KEY=sk-ant-...
-
-# Paso 1: agente sin tools
-mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v1.Main
-
-# Paso 2: + readFile
-mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v2.Main
-
-# Paso 3: + listFiles
-mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v3.Main
-
-# Anti-patrón: demasiadas tools
-mvn -pl 03-antipatterns exec:java -Dexec.mainClass=com.example.antipatterns.bad.TooManyToolsAgent
-
-# Solución: agentes especializados
-mvn -pl 03-antipatterns exec:java -Dexec.mainClass=com.example.antipatterns.good.FocusedAgent
-
-# Spring AI (proyecto independiente)
-cd 02-spring-ai-comparison && mvn spring-boot:run
+mvn install -q
 ```
 
-## Guión de clase recomendado
+Abre el proyecto en el editor. Tendrás las carpetas `01-minimal-agent`, `02-spring-ai-comparison` y `03-antipatterns` visibles en el árbol.
 
-1. Ejecutar `v1.Main` — el agente responde pero no sabe nada del repo
-2. Ejecutar `v2.Main` — el agente llama a `readFile`; mostrar la traza
-3. Ejecutar `v3.Main` — el agente usa `listFiles` antes de `readFile`
-4. Abrir `bad/TooManyToolsAgent.java` y `good/FocusedAgent.java` en paralelo — el contraste visual hace el punto
-5. Ejecutar ambos y comparar las trazas — TooManyTools vacila, FocusedAgent va directo
-6. Abrir `bad/VagueDescriptionsAgent.java` y `good/DescriptiveToolsAgent.java` — leer las descripciones en voz alta
+---
+
+## Parte 1 — Construcción incremental del agente (`01-minimal-agent`)
+
+El objetivo es mostrar que un agente en LangChain4j se construye en tres piezas. Cada paso añade una sola cosa.
+
+### Paso 1 — La interfaz y el builder (`v1`)
+
+Abre `v1/CodeReviewAgent.java`. Di: "esto es el contrato del agente. Solo una interfaz Java. LangChain4j genera la implementación que gestiona el loop completo."
+
+Abre `v1/Main.java`. Señala el bloque del builder:
+```java
+AiServices.builder(CodeReviewAgent.class)
+    .chatModel(model)
+    .systemMessageProvider(id -> SYSTEM_PROMPT)
+    .build();
+```
+Di: "sin tools, el agente solo puede responder con lo que sabe de entrenamiento."
+
+Ejecuta:
+```bash
+mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v1.Main
+```
+El agente responde al diff. No hay traza de tool calls porque no tiene herramientas.
+
+---
+
+### Paso 2 — Primera tool: `readFile` (`v2`)
+
+Abre `v2/GitTools.java`. Señala la anotación `@Tool` y lee la descripción en voz alta: *"Lee el contenido completo de un archivo. Usar cuando necesites ver código existente antes de comentarlo o referenciarlo."* Di: "esta descripción es lo que el modelo lee para decidir si invocar la herramienta. Una descripción vaga produce invocaciones incorrectas."
+
+Abre `v2/Main.java`. Señala la única línea añadida respecto a v1:
+```java
+.tools(new GitTools())
+```
+Di: "esto es todo lo que cambia en el código del cliente."
+
+Ejecuta:
+```bash
+mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v2.Main
+```
+En la traza aparece una llamada a `readFile`. El agente intentó leer `TaskService.java` para entender qué es `TaskNotFoundException` antes de opinar. Di: "el loop tool-use que vimos en el slide 10 está ocurriendo aquí, gestionado por LangChain4j."
+
+---
+
+### Paso 3 — Segunda tool: `listFiles` (`v3`)
+
+Abre `v3/GitTools.java`. Señala el nuevo método `listFiles`. Di: "ahora el agente puede explorar el directorio antes de leer un archivo, sin que nadie le diga la ruta exacta."
+
+Ejecuta:
+```bash
+mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v3.Main
+```
+En la traza aparece primero `listFiles`, luego `readFile`. Di: "nadie le dijo que listara primero. Decidió por su cuenta basándose en las descripciones de las tools y en el system prompt, que le indica que explore si no conoce una ruta."
+
+---
+
+## Parte 2 — Comparativa Spring AI (`02-spring-ai-comparison`)
+
+Abre `CodeReviewTools.java`. Señala `@Component`. Di: "en Spring AI las tools son beans de Spring. Pueden usar `@Autowired`, acceder a JPA, a Security, a cualquier parte del ecosistema Spring."
+
+Abre `CodeReviewRunner.java` y muestra el comentario al inicio del archivo. Lee las dos columnas en voz alta:
+
+```
+LangChain4j:                    Spring AI:
+AiServices.builder(...)         ChatClient.Builder (inyectado)
+  .chatModel(model)               .defaultSystem(...)
+  .tools(new GitTools())          .defaultTools(tools)  ← bean Spring
+  .build()                        .build()
+```
+
+Di: "misma funcionalidad. La elección depende del proyecto: si ya está en Spring Boot, Spring AI. Si no, LangChain4j."
+
+Ejecutar este módulo es opcional. Si lo haces:
+```bash
+cd 02-spring-ai-comparison
+ANTHROPIC_API_KEY=sk-ant-... mvn spring-boot:run
+```
+
+---
+
+## Parte 3 — Anti-patrones (`03-antipatterns`)
+
+### Anti-patrón 1: demasiadas tools
+
+Pon en pantalla `bad/TooManyToolsAgent.java` y `good/FocusedAgent.java` en paralelo (pantalla partida o dos ventanas del editor).
+
+En `bad/`: cuenta las tools en voz alta mientras scrolleas: `readFile`, `getFileContent` (similar a la anterior), `writeFile`, `listFiles`, `deleteFile`, `runTests`, `compile`, `gitLog`, `gitDiff`, `gitCommit`, `gitPush`, `createJiraIssue`, `getJiraIssue`, `sendEmail`, `queryDatabase`. Di: "quince tools. El modelo tiene que elegir entre quince opciones en cada paso. Fíjate además en `readFile` y `getFileContent`: son casi idénticas. El modelo no sabe cuál usar."
+
+En `good/`: muestra que las 15 tools se reparten en dos agentes de 3 tools cada uno. Di: "cada agente tiene un objetivo único. El revisor solo lee y ejecuta tests; no escribe ni toca Jira. El espacio de decisión es radicalmente más pequeño."
+
+Ejecuta los dos y compara las trazas:
+```bash
+mvn -pl 03-antipatterns exec:java -Dexec.mainClass=com.example.antipatterns.bad.TooManyToolsAgent
+mvn -pl 03-antipatterns exec:java -Dexec.mainClass=com.example.antipatterns.good.FocusedAgent
+```
+
+---
+
+### Anti-patrón 2: descripciones vagas y sin manejo de error
+
+Abre `bad/VagueDescriptionsAgent.java`. Lee las descripciones en voz alta:
+- `@Tool("procesa el archivo")` — pregunta al grupo: "¿cuándo usaría el modelo esta herramienta?"
+- `@Tool("hace cosas con git")` — ídem
+
+Señala que `processFile` lanza `IOException` sin capturar. Di: "cuando una tool lanza una excepción cruda, el agente entra en un bucle de reintentos cada vez peores porque no sabe qué hacer con el error."
+
+Abre `good/DescriptiveToolsAgent.java`. Lee la descripción de `readFile`:
+> *"Lee el contenido completo de un archivo del repositorio. Usar cuando necesites ver el código de una clase o método antes de comentarlo. No usar para directorios."*
+
+Señala tres cosas:
+1. La descripción enumera cuándo usar la tool y cuándo no
+2. El ejemplo de ruta en el `@P` ayuda al modelo a formatear el argumento correctamente
+3. El bloque `try/catch` devuelve un mensaje útil: *"No se puede leer '...'. Prueba listar el directorio primero."* El modelo puede reaccionar a eso
+
+Señala el contador `MAX_TOOL_CALLS = 10`. Di: "este es el workaround práctico para el anti-patrón de bucle infinito. Si el agente llega a diez llamadas, recibe un mensaje claro y puede detenerse."
