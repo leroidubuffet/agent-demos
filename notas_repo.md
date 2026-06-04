@@ -52,7 +52,7 @@ Ejecuta:
 ```bash
 mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v2.Main
 ```
-En la traza aparece una llamada a `readFile`. El agente intentó leer `TaskService.java` para entender qué es `TaskNotFoundException` antes de opinar. Di: "el loop tool-use que vimos en el slide 10 está ocurriendo aquí, gestionado por LangChain4j."
+En la traza aparece una llamada a `readFile`. El agente lee `TaskService.java` para ver el código que se está modificando, y probablemente también `TaskNotFoundException.java` para verificar que la clase existe antes de opinar. Di: "el loop tool-use que vimos en el slide 10 está ocurriendo aquí, gestionado por LangChain4j."
 
 ---
 
