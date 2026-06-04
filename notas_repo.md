@@ -24,7 +24,7 @@ Abre `v1/CodeReviewAgent.java`. Di: "esto es el contrato del agente. Solo una in
 Abre `v1/Main.java`. Señala el bloque del builder:
 ```java
 AiServices.builder(CodeReviewAgent.class)
-    .chatModel(model)
+    .chatLanguageModel(model)
     .systemMessageProvider(id -> SYSTEM_PROMPT)
     .build();
 ```
@@ -75,11 +75,11 @@ Abre `CodeReviewTools.java`. Señala `@Component`. Di: "en Spring AI las tools s
 Abre `CodeReviewRunner.java` y muestra el comentario al inicio del archivo. Lee las dos columnas en voz alta:
 
 ```
-LangChain4j:                    Spring AI:
-AiServices.builder(...)         ChatClient.Builder (inyectado)
-  .chatModel(model)               .defaultSystem(...)
-  .tools(new GitTools())          .defaultTools(tools)  ← bean Spring
-  .build()                        .build()
+LangChain4j:                        Spring AI:
+AiServices.builder(...)             ChatClient.Builder (inyectado)
+  .chatLanguageModel(model)           .defaultSystem(...)
+  .tools(new GitTools())              .defaultTools(tools)  ← bean Spring
+  .build()                            .build()
 ```
 
 Di: "misma funcionalidad. La elección depende del proyecto: si ya está en Spring Boot, Spring AI. Si no, LangChain4j."
