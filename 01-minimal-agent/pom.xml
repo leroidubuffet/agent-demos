@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>01-minimal-agent</artifactId>
-    <name>01 — Agente mínimo (slide 26)</name>
+    <name>01 — Agente mínimo</name>
 
     <dependencies>
         <dependency>
@@ -21,6 +21,11 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-anthropic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.13</version>
         </dependency>
     </dependencies>
 </project>

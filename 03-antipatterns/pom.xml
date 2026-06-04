@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>03-antipatterns</artifactId>
-    <name>03 — Anti-patrones (slide 28)</name>
+    <name>03 — Anti-patrones</name>
 
     <dependencies>
         <dependency>

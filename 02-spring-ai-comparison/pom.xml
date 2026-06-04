@@ -15,7 +15,7 @@
     <groupId>com.example</groupId>
     <artifactId>02-spring-ai-comparison</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>02 — Comparativa Spring AI (slide 27)</name>
+    <name>02 — Comparativa Spring AI</name>
 
     <properties>
         <java.version>21</java.version>
