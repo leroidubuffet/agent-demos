@@ -1,7 +1,7 @@
 # agent-demos
 
 Ejemplos de agentes Java con LangChain4j y Spring AI para el curso
-**"IA generativa en el desarrollo de software"**.
+*IA generativa en el desarrollo de software*.
 
 ## Requisitos
 
@@ -11,7 +11,7 @@ Ejemplos de agentes Java con LangChain4j y Spring AI para el curso
 
 ## Módulos
 
-### `01-minimal-agent` — Construcción incremental de un agente
+### `01-minimal-agent`: Construcción incremental de un agente
 
 Tres versiones del mismo agente de revisión de código, cada una añade una pieza:
 
@@ -27,7 +27,7 @@ mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v2.Main
 mvn -pl 01-minimal-agent exec:java -Dexec.mainClass=com.example.agent.v3.Main
 ```
 
-### `02-spring-ai-comparison` — El mismo agente con Spring AI
+### `02-spring-ai-comparison`: El mismo agente con Spring AI
 
 Equivalente funcional de `v3` usando Spring Boot y Spring AI en lugar de LangChain4j.
 Las tools son beans de Spring (`@Component`) inyectados en el `ChatClient`.
@@ -40,7 +40,7 @@ ANTHROPIC_API_KEY=sk-ant-... mvn spring-boot:run
 > Este módulo tiene su propio `pom.xml` con Spring Boot como parent y no forma
 > parte del proyecto Maven raíz.
 
-### `03-antipatterns` — Patrones problemáticos y sus correcciones
+### `03-antipatterns`: Patrones problemáticos y sus correcciones
 
 Cuatro archivos en dos carpetas:
 
