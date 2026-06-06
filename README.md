@@ -34,7 +34,7 @@ Las tools son beans de Spring (`@Component`) inyectados en el `ChatClient`.
 
 ```bash
 cd 02-spring-ai-comparison
-ANTHROPIC_API_KEY=sk-ant-... mvn spring-boot:run
+mvn spring-boot:run
 ```
 
 > Este módulo tiene su propio `pom.xml` con Spring Boot como parent y no forma
@@ -59,7 +59,6 @@ mvn -pl 03-antipatterns exec:java -Dexec.mainClass=com.example.antipatterns.good
 ## Configuración
 
 ```bash
-export ANTHROPIC_API_KEY=sk-ant-...
 mvn install   # compila 01-minimal-agent y 03-antipatterns
 ```
 
