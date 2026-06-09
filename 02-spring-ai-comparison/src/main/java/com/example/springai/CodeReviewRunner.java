@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 //
 // LangChain4j:                          Spring AI:
 // AiServices.builder(Agent.class)       ChatClient.Builder (inyectado)
-//   .chatModel(model)                     .defaultSystem(...)
+//   .chatLanguageModel(model)             .defaultSystem(...)
 //   .tools(new GitTools())                .defaultTools(tools)  ← bean Spring
 //   .systemMessageProvider(...)           .build()
 //   .build()
